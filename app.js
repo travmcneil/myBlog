@@ -11,18 +11,67 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/myBlogDB', { useNewUrlParser: true });
 
 const blogSchema = new mongoose.Schema ({
-  title: String,
-  body: String,
+  title: {
+    type: String,
+    required: [true, "Must have a title"]
+  },
+  body: {
+    type: String,
+    required: [true, "Must have a body"]
+  },
 })
 
 const Blog = mongoose.model("Blog", blogSchema);
 
 const blog = new Blog({
-  title: "Day 6",
-  body: "This is my day 6 entry"
+  title: "Day 7",
+  body: "This is my day 7 entry"
 })
 
+const userSchema = new mongoose.Schema ({
+  id: {
+    type: String,
+    required: [true, "Must have a id"]
+  },
+  firstName: {
+    type: String,
+    required: [true, "Must have a first name"]
+  },
+  lastName: {
+    type: String,
+    required: [true, "Must have a last name"]
+  },
+  email: {
+    type: String,
+  },
+})
+
+const User = mongoose.model("User", userSchema);
+
+const userName = new User({
+  id: "myId",
+  firstName: "Travis",
+  lastName: "McNeil",
+  email: "travmcneil@gmail.com"
+})
+
+// userName.save();
+
 // blog.save();
+
+// UPDATE EXAMPLE
+// User.updateOne({ firstName: "Travis" }, { id: "a4084" }).then((data) => {
+//   console.log("update complete");
+// });
+
+
+
+User.find().then((data) => {
+  // console.log(data);
+  data.forEach(function(d){
+    console.log(d.firstName + " " + d.lastName + " " + d.id);
+  });
+ });
 
 
 const homeStartingContent =
