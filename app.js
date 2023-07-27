@@ -67,9 +67,7 @@ const userName = new User({
 
 
 User.find().then((data) => {
-  // console.log(data);
   data.forEach(function(d){
-    console.log(d.firstName + " " + d.lastName + " " + d.id);
   });
  });
 
@@ -94,13 +92,15 @@ app.use(
   })
 );
 
-let posts = [];
-
 app.get("/", (req, res) => {
-  res.render("home", {
-    homeStartingContent: homeStartingContent,
-    posts: posts,
+  Blog.find({}).then (function (foundItems){
+    res.render("home", {
+      homeStartingContent: homeStartingContent,
+      posts: foundItems,
+    });
   });
+
+  
 });
 
 app.get("/about", (req, res) => {
@@ -116,20 +116,29 @@ app.get("/compose", (req, res) => {
 });
 
 app.post("/compose", (req, res) => {
-  const postObject = {
+  const postObject = new Blog({
     title: req.body.postTitle,
     body: req.body.postBody,
-  };
+  });
+  postObject.save();
 
-  posts.push(postObject);
+  
   res.redirect("/");
 });
 
 app.get("/post/:postid", (req, res) => {
   id = req.params.postid;
-  post = posts[id];
-  console.log(post);
-  res.render("post", { post: post });
+  Blog.findOne({_id: id}).then (function (foundItem) {
+    res.render("post", { post: foundItem });
+  });
+});
+
+app.post("/delete", (req, res) => {
+  id = req.body.delete;
+  console.log(id);
+  Blog.findByIdAndRemove(id).then (function (foundItem) {
+    res.redirect('/');
+  });
 });
 
 app.listen(port, () => {
